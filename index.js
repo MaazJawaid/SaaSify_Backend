@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken'; 
+import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import axios from 'axios'
 import fs from 'fs';
@@ -41,7 +41,7 @@ app.use(cookieParser())
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Configure CORS
-const allowedOrigin = 'https://resilient-daifuku-553c3f.netlify.app'
+const allowedOrigin = 'http://localhost:5173'
 app.use(cors({
     origin: allowedOrigin,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -816,7 +816,7 @@ const server = app.listen(process.env.PORT || 3000, () => {
 
 const io = new Server(server, {
     cors: {
-        origin: 'https://resilient-daifuku-553c3f.netlify.app',
+        origin: 'http://localhost:5173',
         methods: ['GET', 'POST', 'HEAD', 'PUT', 'PATCH', 'DELETE'],
         credentials: true
     }
@@ -1135,19 +1135,21 @@ app.post("/webhook", (request, response) => {
 
 
 
-
 // 1. Check if the flow is active for the given businessId
 async function checkFlowStatus(businessId) {
+    console.log(`Checking flow status for business ID: ${businessId}`);
     const flow = await Flow.findOne({ businessId, status: 'active' });
     if (!flow) {
         console.log(`Flow for business ${businessId} is inactive.`);
         return false;
     }
+    console.log(`Flow for business ${businessId} is active.`);
     return true;
 }
 
 // 2. Get the last message sent by us in the conversation
 async function getLastMessage(conversationId) {
+    console.log(`Getting last message for conversation ID: ${conversationId}`);
     const lastMessage = await Message.findOne({
         conversationId,
         status: { $in: ['sent', 'delivered', 'read'] } // We are checking for the last message we sent
@@ -1158,31 +1160,40 @@ async function getLastMessage(conversationId) {
         console.log(`No sent message found. Starting flow for conversation ${conversationId}`);
         return null; // Indicates starting flow from the first node
     }
+    console.log(`Last message found: ${lastMessage.content.body}`);
     return lastMessage;
 }
 
 // 3. Process the message to determine if it's part of the flow and what to do next
 async function processNodeMessage(lastMessage, conversationId, businessId, newMessage) {
+    console.log(`Processing message for conversation ID: ${conversationId}`);
+    
     if (!lastMessage) {
         // Start the flow with the first node
+        console.log(`No last message. Starting flow for business ID: ${businessId}`);
         const flow = await Flow.findOne({ businessId, status: 'active' });
         const firstNode = flow?.nodes[0]; // Assuming the first node starts the flow
         if (firstNode) {
             await sendNodeMessage(firstNode, conversationId, newMessage, businessId);
+            console.log(`Sent first node message: ${firstNode.content}`);
         }
         return;
     }
 
     // If the last message is part of a flow node
     const nodeId = lastMessage?.nodeId; // Assuming we store nodeId in ourData
+    console.log(`Last message's nodeId: ${nodeId}`);
     if (nodeId) {
         const flow = await Flow.findOne({ businessId, status: 'active' });
         const node = flow?.nodes.find(n => n.id === nodeId);
+        console.log(`Current node: ${JSON.stringify(node)}`);
 
         // Determine the next step
         if (node?.buttons && node.buttons.length > 1) {
+            console.log(`Node has multiple buttons. Handling node with buttons.`);
             await handleNodeWithButtons(node, conversationId, newMessage, businessId);
         } else {
+            console.log(`Node has one or no buttons. Sending next node automatically.`);
             await sendNextNodeAutomatically(node, conversationId, businessId, newMessage);
         }
     }
@@ -1190,6 +1201,7 @@ async function processNodeMessage(lastMessage, conversationId, businessId, newMe
 
 // 4. Handle node with multiple buttons, match response and proceed
 async function handleNodeWithButtons(node, conversationId, newMessage, businessId) {
+    console.log(`Handling node with buttons for conversation ID: ${conversationId}`);
     const customerMessage = await Message.findOne({
         conversationId,
         status: 'received',
@@ -1198,10 +1210,12 @@ async function handleNodeWithButtons(node, conversationId, newMessage, businessI
 
     if (customerMessage) {
         const buttonResponse = customerMessage?.content?.body;
+        console.log(`Customer response received: ${buttonResponse}`);
         const matchedButton = node.buttons.find(button => button.label === buttonResponse);
 
         if (matchedButton) {
             const nextNodeId = matchedButton.target;
+            console.log(`Matched button. Sending next node ID: ${nextNodeId}`);
             await sendNodeMessage(nextNodeId, conversationId, newMessage, businessId);
         } else {
             console.log(`No matching button for response: ${buttonResponse}`);
@@ -1213,15 +1227,18 @@ async function handleNodeWithButtons(node, conversationId, newMessage, businessI
 
 // 5. Handle nodes with no or one button, send the next node automatically
 async function sendNextNodeAutomatically(node, conversationId, businessId, newMessage) {
+    console.log(`Sending next node automatically for node ID: ${node.id}`);
     const flow = await Flow.findOne({ businessId, status: 'active' });
     const nextNode = flow?.nodes.find(n => n.id === node.connections[0]?.target);
 
     if (nextNode) {
         await sendNodeMessage(nextNode, conversationId, newMessage, businessId);
+        console.log(`Sent next node message: ${nextNode.content}`);
     } else {
         console.log('No next node found.');
     }
 }
+
 
 // Utility function to fetch WhatsApp API token based on businessID
 async function getWhatsAppApiToken(businessId) {
