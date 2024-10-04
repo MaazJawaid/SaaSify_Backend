@@ -41,7 +41,7 @@ app.use(cookieParser())
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Configure CORS
-const allowedOrigin = 'http://localhost:5173'
+const allowedOrigin = 'https://resilient-daifuku-553c3f.netlify.app'
 app.use(cors({
     origin: allowedOrigin,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -816,7 +816,7 @@ const server = app.listen(process.env.PORT || 3000, () => {
 
 const io = new Server(server, {
     cors: {
-        origin: 'http://localhost:5173',
+        origin: 'https://resilient-daifuku-553c3f.netlify.app',
         methods: ['GET', 'POST', 'HEAD', 'PUT', 'PATCH', 'DELETE'],
         credentials: true
     }
