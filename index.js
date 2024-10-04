@@ -1221,10 +1221,12 @@ async function processNodeMessage(lastMessage, conversationId, businessId, newMe
 async function handleNodeWithButtons(node, conversationId, newMessage, businessId) {
     console.log(`Handling node with buttons for conversation ID: ${conversationId}`);
     const customerMessage = await Message.findOne({
-        conversationId,
+        conversationId: ObjectId(`${conversationId}`),
         status: 'received',
         received_at: { $gt: node.received_at }
     }).sort({ received_at: 1 }); // Find the first customer reply after the node was sent
+
+    console.log('customer last message', customerMessage)
 
     if (customerMessage) {
         const buttonResponse = customerMessage?.content?.body;
