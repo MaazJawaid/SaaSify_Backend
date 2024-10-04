@@ -1197,7 +1197,7 @@ async function processNodeMessage(lastMessage, conversationId, businessId, newMe
         console.log(`Current node: ${JSON.stringify(node)}`);
 
         // Determine the next step
-        if (Array.isArray(node?.buttons) && node.buttons.length > 1) {
+        if (Array.isArray(node[0]?.buttons) && node[0].buttons.length > 1) {
             console.log(`Node has multiple buttons. Handling node with buttons.`);
             await handleNodeWithButtons(node, conversationId, newMessage, businessId);
         } else {
