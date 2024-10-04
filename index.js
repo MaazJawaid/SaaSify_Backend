@@ -1185,7 +1185,7 @@ async function processNodeMessage(lastMessage, conversationId, businessId, newMe
     console.log(`Last message's nodeId: ${nodeId}`);
     if (nodeId) {
         const flow = await Flow.findOne({ businessId, status: 'active' });
-        const node = flow?.nodes.find(n => n.id === nodeId);
+        const node = flow?.nodes.find(n => n._id.$oid === nodeId);
         console.log(`Current node: ${JSON.stringify(node)}`);
 
         // Determine the next step
