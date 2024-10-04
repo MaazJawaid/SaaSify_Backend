@@ -1196,6 +1196,16 @@ async function processNodeMessage(lastMessage, conversationId, businessId, newMe
             console.log(`Node has one or no buttons. Sending next node automatically.`);
             await sendNextNodeAutomatically(node, conversationId, businessId, newMessage);
         }
+    } else {
+        // Start the flow with the first node
+        console.log(`last message. Starting flow for business ID: ${businessId} doesn't have a node Id`);
+        const flow = await Flow.findOne({ businessId, status: 'active' });
+        const firstNode = flow?.nodes[0]; // Assuming the first node starts the flow
+        if (firstNode) {
+            await sendNodeMessage(firstNode, conversationId, newMessage, businessId);
+            console.log(`Sent first node message: ${firstNode.content}`);
+        }
+        return;
     }
 }
 
