@@ -1166,14 +1166,13 @@ async function getLastMessage(conversationId) {
 }
 
 function filterById(data, idToFind) {
-    console.log(data)
     return data.filter(item => item._id.equals(idToFind));
 }
 
 // 3. Process the message to determine if it's part of the flow and what to do next
 async function processNodeMessage(lastMessage, conversationId, businessId, newMessage) {
     console.log(`Processing message for conversation ID: ${conversationId}`);
-    
+
     if (!lastMessage) {
         // Start the flow with the first node
         console.log(`No last message. Starting flow for business ID: ${businessId}`);
@@ -1193,13 +1192,13 @@ async function processNodeMessage(lastMessage, conversationId, businessId, newMe
         const flow = await Flow.findOne({ businessId, status: 'active' });
         console.log('selected flow', flow.nodes)
         // const node = flow?.nodes.find(n => n._id === nodeId);
-        
-        const node = filterById(flow?.nodes, new ObjectId(`${nodeId}`));
+
+        const node = filterById(flow, new ObjectId(`${nodeId}`));
         console.log(`Current node: ${JSON.stringify(node)}`);
 
         // Determine the next step
-        if (node?.buttons && node.buttons.length > 1) {
-            console.log(`Node has multiple buttons. Handling node with buttons.`); 
+        if (Array.isArray(node?.buttons) && node.buttons.length > 1) {
+            console.log(`Node has multiple buttons. Handling node with buttons.`);
             await handleNodeWithButtons(node, conversationId, newMessage, businessId);
         } else {
             console.log(`Node has one or no buttons. Sending next node automatically.`);
