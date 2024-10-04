@@ -1166,6 +1166,7 @@ async function getLastMessage(conversationId) {
 }
 
 function filterById(data, idToFind) {
+    console.log(data)
     return data.filter(item => item._id.equals(idToFind));
 }
 
@@ -1193,7 +1194,7 @@ async function processNodeMessage(lastMessage, conversationId, businessId, newMe
         console.log('selected flow', flow.nodes)
         // const node = flow?.nodes.find(n => n._id === nodeId);
         
-        const node = filterById(flow, new ObjectId(`${nodeId}`));
+        const node = filterById(flow?.nodes, new ObjectId(`${nodeId}`));
         console.log(`Current node: ${JSON.stringify(node)}`);
 
         // Determine the next step
