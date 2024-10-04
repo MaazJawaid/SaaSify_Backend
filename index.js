@@ -1409,7 +1409,8 @@ async function handleReceivedMessage(message) {
                 filename: messageData?.document?.filename || '',
             };
         } else {
-            console.log('Unsupported message type:', type);
+            content.body = messageData?.interactive?.button_reply?.title || '';
+            console.log('message type:', type);
             return;
         }
 
