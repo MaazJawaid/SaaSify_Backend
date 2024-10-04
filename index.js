@@ -1190,7 +1190,7 @@ async function processNodeMessage(lastMessage, conversationId, businessId, newMe
 
         // Determine the next step
         if (node?.buttons && node.buttons.length > 1) {
-            console.log(`Node has multiple buttons. Handling node with buttons.`);
+            console.log(`Node has multiple buttons. Handling node with buttons.`); 
             await handleNodeWithButtons(node, conversationId, newMessage, businessId);
         } else {
             console.log(`Node has one or no buttons. Sending next node automatically.`);
