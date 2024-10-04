@@ -1253,7 +1253,7 @@ async function sendNextNodeAutomatically(node, conversationId, businessId, newMe
 // Utility function to fetch WhatsApp API token based on businessID
 async function getWhatsAppApiToken(businessId) {
     const business = await User.findById(businessId);
-    if (!business || !business.whatsappApiToken) {
+    if (!business || !business.longToken) {
         throw new Error(`WhatsApp API token not found for business ID: ${businessId}`);
     }
     return business.longToken;
