@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken'; 
 import cookieParser from 'cookie-parser';
 import axios from 'axios'
 import fs from 'fs';
@@ -1450,6 +1450,7 @@ async function handleReceivedMessage(message) {
         // You will integrate here
         const flowStatus = checkFlowStatus(businessID)
         if (flowStatus) {
+            console.log('flow active')
             const ourLastMessage = getLastMessage(conversation._id)
             const handleMessage = processNodeMessage(ourLastMessage, conversation._id, businessID, newMessage)
             console.log(handleMessage)
