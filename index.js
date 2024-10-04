@@ -19,6 +19,7 @@ import admin from 'firebase-admin';
 import { initializeApp, applicationDefault, cert } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { readFile } from 'fs/promises';
+import { ObjectId } from "mongodb";
 
 
 // Get the current directory
@@ -1164,6 +1165,10 @@ async function getLastMessage(conversationId) {
     return lastMessage;
 }
 
+function filterById(data, idToFind) {
+    return data.filter(item => item._id.equals(idToFind));
+}
+
 // 3. Process the message to determine if it's part of the flow and what to do next
 async function processNodeMessage(lastMessage, conversationId, businessId, newMessage) {
     console.log(`Processing message for conversation ID: ${conversationId}`);
@@ -1186,7 +1191,9 @@ async function processNodeMessage(lastMessage, conversationId, businessId, newMe
     if (nodeId) {
         const flow = await Flow.findOne({ businessId, status: 'active' });
         console.log('selected flow', flow.nodes)
-        const node = flow?.nodes.find(n => n._id === nodeId);
+        // const node = flow?.nodes.find(n => n._id === nodeId);
+        
+        const node = filterById(flow, new ObjectId(`${nodeId}`));
         console.log(`Current node: ${JSON.stringify(node)}`);
 
         // Determine the next step
