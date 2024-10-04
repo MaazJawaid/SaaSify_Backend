@@ -1256,7 +1256,7 @@ async function getWhatsAppApiToken(businessId) {
     if (!business || !business.whatsappApiToken) {
         throw new Error(`WhatsApp API token not found for business ID: ${businessId}`);
     }
-    return business.whatsappApiToken;
+    return business.longToken;
 };
 
 // Helper function to send node message using WhatsApp Cloud API
