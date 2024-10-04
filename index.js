@@ -1451,8 +1451,8 @@ async function handleReceivedMessage(message) {
         const flowStatus = checkFlowStatus(businessID)
         if (flowStatus) {
             console.log('flow active')
-            const ourLastMessage = getLastMessage(conversation._id)
-            const handleMessage = processNodeMessage(ourLastMessage, conversation._id, businessID, newMessage)
+            const ourLastMessage = await getLastMessage(conversation._id)
+            const handleMessage = await processNodeMessage(ourLastMessage, conversation._id, businessID, newMessage)
             console.log(handleMessage)
         }
 
