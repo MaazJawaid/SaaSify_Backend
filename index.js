@@ -1460,7 +1460,7 @@ async function handleReceivedMessage(message) {
                 console.log('Full message object:', JSON.stringify(message, null, 2));
 
                 // Accessing the message parts step-by-step
-                const entry = message?.entry?.[0];
+                const entry = parsedMessage?.entry?.[0];
                 console.log('Entry:', entry);
 
                 const changes = entry?.changes?.[0];
