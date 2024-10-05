@@ -1420,6 +1420,7 @@ async function handleReceivedMessage(message) {
         const parsedMessage = JSON.parse(message);
         const entry = parsedMessage.entry?.[0];
         const changes = entry?.changes?.[0]?.value;
+        const messages = changes?.value?.messages?.[0];
         const metadata = changes?.metadata;
         const contact = changes?.contacts?.[0];
         const messageData = changes?.messages?.[0];
@@ -1454,8 +1455,13 @@ async function handleReceivedMessage(message) {
                 filename: messageData?.document?.filename || '',
             };
         } else {
-            content.body = message.entry[0].changes[0].value.messages[0].interactive.button_reply.title || '';
-            console.log('message type:', type, content.body);
+            if (messages?.interactive?.button_reply) {
+                console.log(`Operating Message: ${messages}`)
+                content.body = messages.interactive.button_reply.title || '';
+                console.log('message type:', type, content.body);
+            } else {
+                console.log('No interactive button reply found in the message.');
+            }
             return;
         }
 
