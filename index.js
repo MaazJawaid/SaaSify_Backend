@@ -1231,15 +1231,9 @@ async function handleNodeWithButtons(node, conversationId, newMessage, businessI
     if (customerMessage) {
         const buttonResponse = customerMessage?.content?.body;
         console.log(`Customer response received: ${buttonResponse}`);
-        console.log('Current passed node:', node);
-        console.log('Node object:', JSON.stringify(node, null, 2));
 
         // Assuming node is an array, access the first element
         const currentNode = node[0];
-
-        console.log('Buttons array:', currentNode?.buttons);  // Check if buttons exist
-        console.log('Is buttons an array?:', Array.isArray(currentNode.buttons));  // Check array status    
-
         const matchedButton = currentNode?.connections?.find(button => button.label === buttonResponse);
 
         if (matchedButton) {
@@ -1280,6 +1274,7 @@ async function getWhatsAppApiToken(businessId) {
 
 // Helper function to send node message using WhatsApp Cloud API
 async function sendNodeMessage(node, conversationId, recentMessage, businessId) {
+    console.log(`Sending message from this node: ${node}`)
     let messageData;
 
     // Prepare message content from the node schema
@@ -1318,6 +1313,8 @@ async function sendNodeMessage(node, conversationId, recentMessage, businessId) 
             }
         } : undefined // Only include interactive if buttons are present
     };
+
+    console.log(`Payload we are sending: ${payload}`)
 
     try {
         // Send message using WhatsApp Cloud API
