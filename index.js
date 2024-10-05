@@ -1231,13 +1231,13 @@ async function handleNodeWithButtons(node, conversationId, newMessage, businessI
     if (customerMessage) {
         const buttonResponse = customerMessage?.content?.body;
         console.log(`Customer response received: ${buttonResponse}`);
-        console.log(`Current passed node: ${node}`)
+        console.log('Current passed node:', node);
         console.log('Node object:', JSON.stringify(node, null, 2));
-
-        console.log(`Current passed node buttons: ${Array.isArray(node.buttons)}`)
-
+        
+        console.log('Buttons array:', node?.buttons);  // Check if buttons exist
+        console.log('Is buttons an array?:', Array.isArray(node.buttons));  // Check array status    
+        
         const matchedButton = node?.buttons?.find(button => button.label === buttonResponse);
-        console.log('matched button is: ', matchedButton)
 
         if (matchedButton) {
             const nextNodeId = matchedButton.target;
