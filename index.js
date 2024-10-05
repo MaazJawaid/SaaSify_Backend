@@ -1239,7 +1239,12 @@ async function handleNodeWithButtons(node, conversationId, newMessage, businessI
         if (matchedButton) {
             const nextNodeId = matchedButton.target;
             console.log(`Matched button. Sending next node ID: ${nextNodeId}`);
-            await sendNodeMessage(nextNodeId, conversationId, newMessage, businessId);
+            const flow = await Flow.findOne({ businessId, status: 'active' });
+
+            console.log(`Searching in active flow: ${nextNode}`)
+            const nextNode = flow?.nodes.find(n => n.id === nextNodeId);
+
+            await sendNodeMessage(nextNode, conversationId, newMessage, businessId);
         } else {
             console.log(`No matching button for response: ${buttonResponse}`);
         }
