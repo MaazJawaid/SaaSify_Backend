@@ -1188,25 +1188,38 @@ async function processNodeMessage(lastMessage, conversationId, businessId, newMe
     // If the last message is part of a flow node
     const nodeId = lastMessage?.nodeId; // Assuming we store nodeId in ourData
     console.log(`Last message's nodeId: ${nodeId}`);
+
     if (nodeId) {
         const flow = await Flow.findOne({ businessId, status: 'active' });
         console.log('selected flow', flow.nodes)
-        // const node = flow?.nodes.find(n => n._id === nodeId);
 
         const node = filterById(flow.nodes, new ObjectId(`${nodeId}`));
-        console.log(`Current node: ${JSON.stringify(node)}`);
 
-        // Determine the next step
-        if (Array.isArray(node[0]?.buttons) && node[0].buttons.length > 1) {
-            console.log(`Node has multiple buttons. Handling node with buttons.`);
-            await handleNodeWithButtons(node, conversationId, newMessage, businessId);
+        if (node) {
+            console.log(`Current node: ${JSON.stringify(node)}`);
+
+            // Determine the next step
+            if (Array.isArray(node[0]?.buttons) && node[0].buttons.length > 1) {
+                console.log(`Node has multiple buttons. Handling node with buttons.`);
+                await handleNodeWithButtons(node, conversationId, newMessage, businessId);
+            } else {
+                console.log(`Node has one or no buttons. Sending next node automatically.`);
+                await sendNextNodeAutomatically(node[0], conversationId, businessId, newMessage);
+            }
         } else {
-            console.log(`Node has one or no buttons. Sending next node automatically.`);
-            await sendNextNodeAutomatically(node, conversationId, businessId, newMessage);
+            // Start the flow with the first node
+            console.log(`Starting flow for business ID: ${businessId}, flow changed!`);
+            const flow = await Flow.findOne({ businessId, status: 'active' });
+            const firstNode = flow?.nodes[0]; // Assuming the first node starts the flow
+            if (firstNode) {
+                await sendNodeMessage(firstNode, conversationId, newMessage, businessId);
+                console.log(`Sent first node message: ${firstNode.content}`);
+            }
+            return;
         }
     } else {
         // Start the flow with the first node
-        console.log(`last message. Starting flow for business ID: ${businessId} doesn't have a node Id`);
+        console.log(`Starting flow for business ID: ${businessId} doesn't have a node Id`);
         const flow = await Flow.findOne({ businessId, status: 'active' });
         const firstNode = flow?.nodes[0]; // Assuming the first node starts the flow
         if (firstNode) {
@@ -1255,7 +1268,8 @@ async function handleNodeWithButtons(node, conversationId, newMessage, businessI
 
 // 5. Handle nodes with no or one button, send the next node automatically
 async function sendNextNodeAutomatically(node, conversationId, businessId, newMessage) {
-    console.log(`Sending next node automatically for node ID: ${node.id}`);
+    console.log(`Sending next node automatically for node ID: ${node?.id}`);
+
     const flow = await Flow.findOne({ businessId, status: 'active' });
     const nextNode = flow?.nodes.find(n => n.id === node.connections[0]?.target);
 
@@ -1263,7 +1277,17 @@ async function sendNextNodeAutomatically(node, conversationId, businessId, newMe
         await sendNodeMessage(nextNode, conversationId, newMessage, businessId);
         console.log(`Sent next node message: ${nextNode.content}`);
     } else {
-        console.log('No next node found.');
+        // console.log('No next node found.');
+
+        // Start the flow with the first node
+        console.log(`Starting flow for business ID: ${businessId} again!`);
+        const flow = await Flow.findOne({ businessId, status: 'active' });
+        const firstNode = flow?.nodes[0]; // Assuming the first node starts the flow
+        if (firstNode) {
+            await sendNodeMessage(firstNode, conversationId, newMessage, businessId);
+            console.log(`Sent first node message: ${firstNode.content}`);
+        }
+        return;
     }
 }
 
@@ -1502,7 +1526,6 @@ async function handleReceivedMessage(message) {
             console.log('flow active')
             const ourLastMessage = await getLastMessage(conversation._id)
             const handleMessage = await processNodeMessage(ourLastMessage, conversation._id, businessID, newMessage)
-            console.log(handleMessage)
         }
 
         // Emit a Socket.IO event to notify clients
