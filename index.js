@@ -1241,8 +1241,8 @@ async function handleNodeWithButtons(node, conversationId, newMessage, businessI
             console.log(`Matched button. Sending next node ID: ${nextNodeId}`);
             const flow = await Flow.findOne({ businessId, status: 'active' });
 
-            console.log(`Searching in active flow: ${nextNode}`)
             const nextNode = flow?.nodes.find(n => n.id === nextNodeId);
+            console.log(`Searching in active flow: ${nextNode}`)
 
             await sendNodeMessage(nextNode, conversationId, newMessage, businessId);
         } else {
