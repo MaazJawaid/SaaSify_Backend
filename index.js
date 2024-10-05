@@ -1220,7 +1220,7 @@ async function processNodeMessage(lastMessage, conversationId, businessId, newMe
 // 4. Handle node with multiple buttons, match response and proceed
 async function handleNodeWithButtons(node, conversationId, newMessage, businessId) {
     console.log(`Handling node with buttons for conversation ID: ${conversationId}`);
-    
+
     const customerMessage = await Message.findOne({
         conversationId: new ObjectId(`${conversationId}`),
         status: 'received',
@@ -1233,11 +1233,14 @@ async function handleNodeWithButtons(node, conversationId, newMessage, businessI
         console.log(`Customer response received: ${buttonResponse}`);
         console.log('Current passed node:', node);
         console.log('Node object:', JSON.stringify(node, null, 2));
-        
-        console.log('Buttons array:', node?.buttons);  // Check if buttons exist
-        console.log('Is buttons an array?:', Array.isArray(node.buttons));  // Check array status    
-        
-        const matchedButton = node?.buttons?.find(button => button.label === buttonResponse);
+
+        // Assuming node is an array, access the first element
+        const currentNode = node[0];
+
+        console.log('Buttons array:', currentNode?.buttons);  // Check if buttons exist
+        console.log('Is buttons an array?:', Array.isArray(currentNode.buttons));  // Check array status    
+
+        const matchedButton = currentNode?.buttons?.find(button => button.label === buttonResponse);
 
         if (matchedButton) {
             const nextNodeId = matchedButton.target;
