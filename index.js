@@ -1234,7 +1234,7 @@ async function handleNodeWithButtons(node, conversationId, newMessage, businessI
         console.log(`Current passed node: ${node}`)
         console.log(`Current passed node buttons: ${node.buttons}`)
 
-        const matchedButton = node.buttons.find(button => button.label === buttonResponse);
+        const matchedButton = node?.buttons?.find(button => button.label.toLowerCase() === buttonResponse.toLowerCase());
         console.log('matched button is: ', matchedButton)
 
         if (matchedButton) {
