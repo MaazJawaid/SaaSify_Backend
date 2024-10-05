@@ -1240,7 +1240,7 @@ async function handleNodeWithButtons(node, conversationId, newMessage, businessI
         console.log('Buttons array:', currentNode?.buttons);  // Check if buttons exist
         console.log('Is buttons an array?:', Array.isArray(currentNode.buttons));  // Check array status    
 
-        const matchedButton = currentNode?.buttons?.find(button => button.label === buttonResponse);
+        const matchedButton = currentNode?.connections?.find(button => button.label === buttonResponse);
 
         if (matchedButton) {
             const nextNodeId = matchedButton.target;
