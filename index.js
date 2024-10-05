@@ -1454,8 +1454,8 @@ async function handleReceivedMessage(message) {
                 filename: messageData?.document?.filename || '',
             };
         } else {
-            content.body = messageData?.interactive?.button_reply?.title || '';
-            console.log('message type:', type);
+            content.body = message.entry[0].changes[0].value.messages[0].interactive.button_reply.title || '';
+            console.log('message type:', type, content.body);
             return;
         }
 
