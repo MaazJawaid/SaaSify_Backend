@@ -1455,13 +1455,38 @@ async function handleReceivedMessage(message) {
                 filename: messageData?.document?.filename || '',
             };
         } else {
-            if (messages?.interactive?.button_reply) {
-                console.log(`Operating Message: ${messages}`)
-                content.body = messages.interactive.button_reply.title || '';
-                console.log('message type:', type, content.body);
-            } else {
-                console.log('No interactive button reply found in the message.');
+            try {
+                // Log the full message object to ensure we see what is being passed
+                console.log('Full message object:', JSON.stringify(message, null, 2));
+
+                // Accessing the message parts step-by-step
+                const entry = message?.entry?.[0];
+                console.log('Entry:', entry);
+
+                const changes = entry?.changes?.[0];
+                console.log('Changes:', changes);
+
+                const value = changes?.value;
+                console.log('Value:', value);
+
+                const messages = value?.messages?.[0];
+                console.log('Messages:', messages);
+
+                const interactive = messages?.interactive;
+                console.log('Interactive:', interactive);
+
+                // Check for interactive button reply
+                if (interactive?.button_reply) {
+                    content.body = interactive.button_reply.title || '';
+                    console.log('Message type:', messages?.type, content.body);
+                } else {
+                    console.log('No interactive button reply found in the message.');
+                }
+
+            } catch (error) {
+                console.error('Error handling message:', error);
             }
+
             return;
         }
 
