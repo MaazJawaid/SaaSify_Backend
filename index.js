@@ -1232,7 +1232,10 @@ async function handleNodeWithButtons(node, conversationId, newMessage, businessI
         const buttonResponse = customerMessage?.content?.body;
         console.log(`Customer response received: ${buttonResponse}`);
         console.log(`Current passed node: ${node}`)
+        console.log(`Current passed node buttons: ${node.buttons}`)
+
         const matchedButton = node.buttons.find(button => button.label === buttonResponse);
+        console.log('matched button is: ', matchedButton)
 
         if (matchedButton) {
             const nextNodeId = matchedButton.target;
