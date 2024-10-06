@@ -42,7 +42,7 @@ app.use(cookieParser())
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Configure CORS
-const allowedOrigin = 'https://scintillating-daifuku-6eaed6.netlify.app'
+const allowedOrigin = 'https://chipper-faun-0cd5fd.netlify.app'
 app.use(cors({
     origin: allowedOrigin,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -817,7 +817,7 @@ const server = app.listen(process.env.PORT || 3000, () => {
 
 const io = new Server(server, {
     cors: {
-        origin: 'https://scintillating-daifuku-6eaed6.netlify.app',
+        origin: 'https://chipper-faun-0cd5fd.netlify.app',
         methods: ['GET', 'POST', 'HEAD', 'PUT', 'PATCH', 'DELETE'],
         credentials: true
     }
