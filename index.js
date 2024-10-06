@@ -1482,12 +1482,9 @@ async function handleReceivedMessage(message) {
                 } else {
                     console.log('No interactive button reply found in the message.');
                 }
-
             } catch (error) {
                 console.error('Error handling message:', error);
             }
-
-            return;
         }
 
         // Extract context if available
