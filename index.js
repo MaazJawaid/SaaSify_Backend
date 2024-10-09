@@ -42,7 +42,7 @@ app.use(cookieParser())
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Configure CORS
-const allowedOrigin = 'https://bespoke-kitten-a6be48.netlify.app'
+const allowedOrigin = 'https://loquacious-llama-5b7893.netlify.app'
 app.use(cors({
     origin: allowedOrigin,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -817,7 +817,7 @@ const server = app.listen(process.env.PORT || 3000, () => {
 
 const io = new Server(server, {
     cors: {
-        origin: 'https://bespoke-kitten-a6be48.netlify.app',
+        origin: 'https://loquacious-llama-5b7893.netlify.app',
         methods: ['GET', 'POST', 'HEAD', 'PUT', 'PATCH', 'DELETE'],
         credentials: true
     }
