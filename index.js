@@ -42,7 +42,7 @@ app.use(cookieParser())
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Configure CORS
-const allowedOrigin = 'https://eclectic-rabanadas-4b1ccb.netlify.app'
+const allowedOrigin = 'https://prismatic-melomakarona-37683f.netlify.app'
 app.use(cors({
     origin: allowedOrigin,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -817,7 +817,7 @@ const server = app.listen(process.env.PORT || 3000, () => {
 
 const io = new Server(server, {
     cors: {
-        origin: 'https://eclectic-rabanadas-4b1ccb.netlify.app',
+        origin: 'https://prismatic-melomakarona-37683f.netlify.app',
         methods: ['GET', 'POST', 'HEAD', 'PUT', 'PATCH', 'DELETE'],
         credentials: true
     }
