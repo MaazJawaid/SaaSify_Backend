@@ -3236,6 +3236,7 @@ const NodeSchema = new mongoose.Schema({
     body: { type: String, default: "" },
     footer: { type: String, default: "" },
     buttons: [ButtonSchema],
+    mediaId: {type: String, default: ""},
     connections: [ConnectionSchema]
 });
 
@@ -3261,18 +3262,35 @@ const FlowSchema = new mongoose.Schema({
 
 const Flow = mongoose.model('Flow', FlowSchema);
 
-// API to save flow data
 app.post('/api/flows', async (req, res) => {
     try {
-        const { flowName, nodes, edges, originalData, businessId } = req.body; // Destructure flowName
+        const { flowName, nodes, edges, originalData, businessId } = req.body;
+
+        // Log the request body
+        console.log("Received flow data to save:", {
+            flowName, 
+            nodesCount: nodes.length, 
+            edgesCount: edges.length, 
+            businessId
+        });
+
         const flowData = { flowName, nodes, edges, originalData, businessId }; // Prepare data to save
         const flow = new Flow(flowData);
+
         await flow.save();
+
+        // Log successful save
+        console.log("Flow saved successfully:", flow);
+
         res.status(201).json({ message: 'Flow saved successfully', flow });
     } catch (error) {
+        // Log the error
+        console.error("Error saving flow:", error);
+
         res.status(400).json({ message: 'Error saving flow', error: error.message });
     }
 });
+
 
 app.get('/api/flows/:id', async (req, res) => {
     try {
